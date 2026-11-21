@@ -444,10 +444,16 @@ export function getStandardThemeColors(appearance: ThemeAppearance): ThemeColors
   return (standardLightThemeColors ??= decodeThemeColors(T3_CODE_LIGHT_THEME_COLORS));
 }
 
-// index.css paints the light bubble a step darker than the shared palette mobile uses.
+// index.css paints the light bubble a step darker than the shared palette mobile uses,
+// and the dark surfaces in the Autoresearch palette.
 const STANDARD_WEB_PAINTED_COLORS: Record<ThemeAppearance, Partial<ThemeColors>> = {
   light: { messageSurface: "#ebebed" },
-  dark: { canvas: "#000000", messageSurface: "#1e1e1e" },
+  dark: {
+    canvas: "#0a0a0e",
+    surface: "#121218",
+    surfaceRaised: "#121218",
+    messageSurface: "#19181c",
+  },
 };
 
 /** The standard theme as index.css paints it, for solves that measure the page. */
