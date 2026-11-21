@@ -4,6 +4,13 @@
   "rules": { "types": "off", "nsTypes": "off" },
   // These executables are supplied by the OS or installed separately from npm.
   "ignoreBinaries": ["eas", "file", "mkfifo", "pkill", "pkg-config", "plutil", "sips"],
+  // Only upstream's GitHub workflows run these, and this fork does not carry the workflows.
+  "ignoreFiles": [
+    ".github/scripts/mirror-play-apk.cjs",
+    "apps/web/scripts/verify-built-boot.ts",
+    "scripts/resolve-nightly-release.ts",
+    "scripts/smoke-cli-archive.ts",
+  ],
   "workspaces": {
     ".": {
       // Keep vendored reference repositories outside the root project.
