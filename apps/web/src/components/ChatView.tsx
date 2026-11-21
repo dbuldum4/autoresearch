@@ -294,6 +294,7 @@ import {
 } from "../state/entities";
 import { useEnvironmentShellHasSnapshot } from "../state/shell";
 import { ChatComposer, type ChatComposerHandle } from "./chat/ChatComposer";
+import { AttractorField } from "./AttractorField";
 import { DraftHeroHeadline } from "./chat/DraftHeroHeadline";
 import { ExpandedImageDialogHost, openExpandedImagePreview } from "./chat/ExpandedImageDialog";
 import {
@@ -3687,6 +3688,12 @@ export default function ChatView(props: ChatViewProps) {
               )}
             </div>
 
+            {isDraftHeroState ? (
+              <AttractorField className="atr-field-hero z-0" />
+            ) : isWorking ? (
+              <AttractorField active className="atr-field-live z-0" form={1} intensity={0.7} />
+            ) : null}
+
             <div
               {...workspaceAreaProps(
                 "composer",
@@ -3739,7 +3746,10 @@ export default function ChatView(props: ChatViewProps) {
                   >
                     <ChildThreadApprovals threadRef={activeThreadRef} />
                     <div className="relative">
-                      <ComposerSurface.Shell contextRow={showComposerContextStrip}>
+                      <ComposerSurface.Shell
+                        contextRow={showComposerContextStrip}
+                        data-agent-working={isWorking || undefined}
+                      >
                         <ComposerSurface.Host
                           inert={queuedRunEdit.isSaving}
                           aria-busy={queuedRunEdit.isSaving}

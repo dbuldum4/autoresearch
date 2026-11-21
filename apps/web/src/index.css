@@ -170,9 +170,8 @@ html[data-mobile-composer-route-transition="true"]::view-transition-old(t3-mobil
    default stacks are mirrored in `appearanceFonts.ts`. */
 @theme {
   --font-sans:
-    -apple-system, BlinkMacSystemFont, "Inter Variable", "Segoe UI", system-ui, sans-serif;
-  --font-mono:
-    ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    "Mona Sans Variable", -apple-system, BlinkMacSystemFont, "Inter Variable", system-ui, sans-serif;
+  --font-mono: "Commit Mono", "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
 }
 
 @theme inline {
@@ -2652,4 +2651,386 @@ code {
 
 .messages-timeline-scroll:focus-visible {
   outline: none;
+}
+
+/* ============================================================================
+   Attractor: the visual layer of this fork, kept last so it wins the cascade.
+   Colour tokens apply only while no custom theme is active, so imported themes still win.
+   Structure (stage, chrome, type) applies always. */
+
+:root {
+  --atr-umbra: #050507;
+  --atr-obsidian: #0a0a0e;
+  --atr-graphite: #121218;
+  --atr-slate: #181820;
+  --atr-moonstone: #ece7df;
+  --atr-ash: #8e8b93;
+  --atr-corona: #ffb36b;
+  --atr-corona-core: #fff1dc;
+  --atr-ember: #c2571f;
+  --atr-blueshift: #86b6ff;
+  --atr-hairline: rgb(236 231 223 / 8%);
+  --atr-stage-radius: 14px;
+  --atr-stage-gap: 8px;
+  --atr-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius: 0.625rem;
+  --control-radius: 0.625rem;
+  --glass-blur: 28px;
+  --glass-opacity: 72%;
+  --glass-saturation: 1.3;
+}
+
+html.dark:not([data-theme-id]) {
+  --background: var(--atr-obsidian);
+  --app-chrome-background: var(--atr-umbra);
+  --surface-raised: var(--atr-graphite);
+  --foreground: var(--atr-moonstone);
+  --card: var(--atr-graphite);
+  --card-foreground: var(--atr-moonstone);
+  --popover: var(--atr-slate);
+  --popover-foreground: var(--atr-moonstone);
+  --primary: var(--atr-corona);
+  --primary-foreground: #1c1006;
+  --secondary: rgb(236 231 223 / 4%);
+  --secondary-foreground: var(--atr-moonstone);
+  --muted: rgb(236 231 223 / 4%);
+  --muted-foreground: var(--atr-ash);
+  --accent: rgb(236 231 223 / 6%);
+  --accent-foreground: var(--atr-moonstone);
+  --message-surface: rgb(236 231 223 / 6.5%);
+  --message-action-hover: color-mix(in srgb, var(--atr-corona) 86%, white);
+  --border: var(--atr-hairline);
+  --input: rgb(236 231 223 / 12%);
+  --ring: var(--atr-corona);
+  --info: var(--atr-blueshift);
+  --info-foreground: var(--atr-blueshift);
+  --update: var(--atr-corona);
+  --update-foreground: var(--atr-corona);
+  --warning-foreground: #f3c66b;
+  --success-foreground: #7fd9a8;
+  --sidebar: var(--atr-umbra);
+  --sidebar-foreground: var(--atr-moonstone);
+  --sidebar-muted-foreground: var(--atr-ash);
+  --sidebar-control-surface: rgb(236 231 223 / 5%);
+  --sidebar-row-hover: rgb(236 231 223 / 5%);
+  --sidebar-row-active: rgb(236 231 223 / 9%);
+  --sidebar-row-selected: rgb(236 231 223 / 8%);
+  --sidebar-border: var(--atr-hairline);
+  --sidebar-stage-fade: transparent;
+  --code-background: #0d0d12;
+  --terminal-background: var(--atr-obsidian);
+  --terminal-cursor: var(--atr-corona);
+  --terminal-selection-background: rgb(255 179 107 / 24%);
+}
+
+html.dark:not([data-theme-id]) [data-app-sidebar] {
+  --background: var(--atr-umbra);
+  --foreground: var(--atr-moonstone);
+  --card: transparent;
+  --card-foreground: var(--atr-moonstone);
+  --accent: rgb(236 231 223 / 7%);
+  --accent-foreground: var(--atr-moonstone);
+  --muted: rgb(236 231 223 / 4%);
+  --muted-foreground: var(--atr-ash);
+  --border: var(--atr-hairline);
+  --input: rgb(236 231 223 / 14%);
+  --sidebar: var(--atr-umbra);
+  --sidebar-foreground: var(--atr-moonstone);
+  --sidebar-muted-foreground: var(--atr-ash);
+  --sidebar-control-surface: rgb(236 231 223 / 5%);
+  --sidebar-row-hover: rgb(236 231 223 / 5%);
+  --sidebar-row-active: rgb(236 231 223 / 9%);
+  --sidebar-row-selected: rgb(236 231 223 / 8%);
+  --sidebar-border: transparent;
+  --sidebar-stage-fade: transparent;
+  --secondary-label: #7d7a82;
+}
+
+/* ---------------------------------------------------------------- chrome */
+
+/* The window is the chrome. On macOS the native vibrancy shows through it; in a
+   browser it falls back to Umbra with a faint horizon glow. */
+html,
+body {
+  background-color: var(--atr-umbra) !important;
+}
+body {
+  background-image:
+    radial-gradient(120% 80% at 0% 100%, rgb(194 87 31 / 9%), transparent 60%),
+    radial-gradient(90% 60% at 100% 0%, rgb(134 182 255 / 5%), transparent 55%);
+  background-attachment: fixed;
+}
+html.electron,
+html.electron body {
+  background-color: transparent !important;
+}
+html.electron body {
+  /* Tints the vibrancy material so text keeps its contrast over any wallpaper. */
+  background-image:
+    radial-gradient(120% 80% at 0% 100%, rgb(194 87 31 / 10%), transparent 60%),
+    linear-gradient(rgb(5 5 7 / 62%), rgb(5 5 7 / 62%));
+}
+
+[data-slot="sidebar-wrapper"] {
+  background: transparent;
+}
+[data-slot="sidebar-inner"],
+[data-slot="sidebar-container"] {
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+}
+
+/* The stage: the working surface floats inside the chrome. */
+@media (min-width: 768px) {
+  [data-slot="sidebar-wrapper"] > [data-slot="sidebar-inset"] {
+    margin: var(--atr-stage-gap);
+    margin-inline-start: 0;
+    height: calc(100dvh - 2 * var(--atr-stage-gap));
+    min-height: 0;
+    border-radius: var(--atr-stage-radius);
+    overflow: clip;
+    background-image: none;
+    box-shadow:
+      0 0 0 1px var(--atr-hairline),
+      inset 0 1px 0 rgb(255 255 255 / 4%),
+      0 24px 60px -30px rgb(0 0 0 / 80%);
+  }
+  [data-slot="sidebar-wrapper"]:not(:has([data-slot="sidebar"][data-state="expanded"]))
+    > [data-slot="sidebar-inset"] {
+    margin-inline-start: var(--atr-stage-gap);
+  }
+}
+
+/* ------------------------------------------------------------------ type */
+
+body {
+  font-feature-settings: "ss01", "cv01";
+  font-optical-sizing: auto;
+  letter-spacing: 0.005em;
+}
+
+.atr-display {
+  font-family: var(--font-sans);
+  font-stretch: 122%;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+}
+
+.atr-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+::selection {
+  background: rgb(255 179 107 / 28%);
+  color: var(--atr-corona-core);
+}
+
+/* ------------------------------------------------------------ attractor */
+
+.atr-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.atr-field canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1600ms var(--atr-ease);
+}
+.atr-field[data-ready="true"] canvas {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atr-field canvas {
+    transition: none;
+  }
+}
+
+/* Behind the new-thread hero: bright at the rim, quiet where the composer sits. */
+.atr-field-hero {
+  -webkit-mask-image: radial-gradient(
+    ellipse 40% 22% at 50% 48%,
+    rgb(0 0 0 / 30%) 0%,
+    rgb(0 0 0 / 30%) 50%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 40% 22% at 50% 48%,
+    rgb(0 0 0 / 30%) 0%,
+    rgb(0 0 0 / 30%) 50%,
+    #000 100%
+  );
+}
+
+/* Over a working thread: light passing behind the conversation, dim under the text column. */
+.atr-field-live {
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    rgb(0 0 0 / 16%) 32%,
+    rgb(0 0 0 / 16%) 68%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    rgb(0 0 0 / 16%) 32%,
+    rgb(0 0 0 / 16%) 68%,
+    #000 100%
+  );
+}
+
+/* --------------------------------------------------------------- composer */
+
+[data-slot="composer-shell"] {
+  --chat-composer-glass-surface: var(--atr-graphite) !important;
+  --chat-composer-outline: rgb(236 231 223 / 10%) !important;
+  --chat-composer-highlight: rgb(255 241 220 / 5%) !important;
+}
+[data-slot="composer-shell"]::before,
+[data-slot="composer-host"],
+[data-slot="composer-host"]::before,
+[data-slot="composer-host"]::after,
+[data-chat-composer-main-surface="true"],
+[data-chat-composer-main-surface="true"]::after {
+  border-radius: 22px;
+}
+[data-slot="composer-host"] {
+  box-shadow:
+    0 30px 80px -30px rgb(0 0 0 / 90%),
+    0 0 0 1px rgb(0 0 0 / 40%);
+  transition: box-shadow 600ms var(--atr-ease);
+}
+[data-slot="composer-host"]:focus-within {
+  box-shadow:
+    0 30px 80px -30px rgb(0 0 0 / 90%),
+    0 0 0 1px rgb(255 179 107 / 22%),
+    0 0 44px -12px rgb(255 179 107 / 22%);
+}
+
+/* A turning light on the composer's edge while an agent works. */
+@property --atr-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.atr-composer-aura {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  border-radius: 23px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 900ms var(--atr-ease);
+}
+.atr-composer-aura::before,
+.atr-composer-aura::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--atr-angle),
+    transparent 0deg,
+    rgb(134 182 255 / 55%) 40deg,
+    var(--atr-corona-core) 95deg,
+    var(--atr-corona) 130deg,
+    rgb(194 87 31 / 50%) 180deg,
+    transparent 250deg
+  );
+}
+.atr-composer-aura::before {
+  inset: -4px;
+  filter: blur(22px);
+  opacity: 0.2;
+}
+.atr-composer-aura::after {
+  padding: 1.5px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+[data-agent-working] > .atr-composer-aura {
+  opacity: 1;
+}
+[data-agent-working] > .atr-composer-aura::before,
+[data-agent-working] > .atr-composer-aura::after {
+  animation: atr-turn 5.5s linear infinite;
+}
+@keyframes atr-turn {
+  to {
+    --atr-angle: 360deg;
+  }
+}
+
+/* The working glyph: two orbits precessing around a core. */
+.atr-orbit {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.atr-orbit::before,
+.atr-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.25px solid transparent;
+  border-top-color: var(--atr-corona);
+  border-right-color: rgb(255 179 107 / 35%);
+  animation: atr-spin 1.6s cubic-bezier(0.5, 0.15, 0.5, 0.85) infinite;
+}
+.atr-orbit::after {
+  inset: 3.5px;
+  border-top-color: var(--atr-blueshift);
+  border-right-color: rgb(134 182 255 / 30%);
+  animation-duration: 1.1s;
+  animation-direction: reverse;
+}
+@keyframes atr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.atr-wordmark {
+  font-size: 0.8125rem;
+  font-stretch: 118%;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-agent-working] > .atr-composer-aura::before,
+  [data-agent-working] > .atr-composer-aura::after,
+  .atr-orbit::before,
+  .atr-orbit::after {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- reading */
+
+/* Display type for the headings an agent writes. */
+.chat-markdown :is(h1, h2, h3) {
+  font-stretch: 112%;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
