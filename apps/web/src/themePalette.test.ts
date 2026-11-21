@@ -11,6 +11,7 @@ import {
   contextChipVariables,
   getThemeDefinition,
   getThemeColorsForMode,
+  getThemeColorVariable,
   getThemeModes,
   getCustomThemes,
   getStandardThemeColors,
@@ -683,6 +684,44 @@ describe("context chip colors", () => {
           }
         }
       }
+    } finally {
+      vi.unstubAllGlobals();
+      invalidateCustomThemes();
+    }
+  });
+
+  it("paints the standard palette for a theme that has no dark colors", () => {
+    const properties = new Map<string, string>();
+    const dataset: Record<string, string | undefined> = {};
+    vi.stubGlobal("window", {
+      localStorage: {
+        getItem: (key: string) =>
+          key === CUSTOM_THEMES_STORAGE_KEY
+            ? JSON.stringify([
+                {
+                  id: "daylight",
+                  label: "Daylight",
+                  appearance: "light",
+                  colors: { canvas: "#ffffff", text: "#111111" },
+                },
+              ])
+            : null,
+      },
+    });
+    vi.stubGlobal("document", {
+      documentElement: {
+        dataset,
+        style: {
+          setProperty: (name: string, value: string) => properties.set(name, value),
+          removeProperty: (name: string) => properties.delete(name),
+        },
+      },
+    });
+    invalidateCustomThemes();
+    try {
+      applyThemePalette("daylight", "dark");
+      expect(properties.has(getThemeColorVariable("text"))).toBe(false);
+      expect(dataset.themeId).toBeUndefined();
     } finally {
       vi.unstubAllGlobals();
       invalidateCustomThemes();

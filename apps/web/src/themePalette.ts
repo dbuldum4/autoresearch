@@ -1731,6 +1731,11 @@ export function applyThemeColorPreview(
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   if (!root?.style) return;
+  if (DARK_ONLY && appearance !== "dark") {
+    // A light draft is never painted; show the standard palette while it is edited.
+    applyThemePalette("system", "dark");
+    return;
+  }
 
   root.dataset.themeId = THEME_PREVIEW_ID;
   root.classList.toggle("dark", appearance === "dark");
@@ -1749,7 +1754,12 @@ export function applyThemePalette(theme: ThemePreference, appearance?: ThemeAppe
   if (!root?.style) return;
 
   setThemePreviewAppearance(null);
-  const palette = getThemeDefinition(theme);
+  const definition = getThemeDefinition(theme);
+  // Dark only: a theme with no dark palette shows the standard one, not its light colors.
+  const palette =
+    DARK_ONLY && definition && getThemeColorsForMode(definition, "dark") === null
+      ? null
+      : definition;
   applyThemeCss(palette?.css);
   applyThemeBackground(palette?.id);
 

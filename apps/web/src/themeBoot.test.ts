@@ -270,7 +270,7 @@ describe("index.html boot script", () => {
           {
             id: "scientific",
             label: "Scientific",
-            appearance: "light",
+            appearance: "dark",
             colors,
           },
         ]),
@@ -283,6 +283,29 @@ describe("index.html boot script", () => {
     expect(boot.bootVariables["--boot-accent"]).toBe(colors.accent);
     expect(boot.backgroundColor).toBe(colors.chrome);
     expect(boot.metaContent).toBe(colors.chrome);
+  });
+
+  it("boots the standard splash for a stored theme that has no dark colors", () => {
+    const boot = runBootScript({
+      storage: {
+        [THEME_STORAGE_KEY]: "daylight",
+        [CUSTOM_THEMES_STORAGE_KEY]: JSON.stringify([
+          {
+            id: "daylight",
+            label: "Daylight",
+            appearance: "light",
+            colors: { canvas: "#ffffff", chrome: "#f4f4f4", text: "#111111", accent: "#3355ff" },
+          },
+        ]),
+      },
+      prefersDark: false,
+    });
+
+    const standard = runBootScript({ prefersDark: false });
+    expect(boot.isDark).toBe(true);
+    expect(boot.themeId).toBeUndefined();
+    expect(boot.backgroundColor).toBe(standard.backgroundColor);
+    expect(boot.bootVariables["--boot-foreground"]).not.toBe("#111111");
   });
 
   it("paints a published theme from its stored copy before the server connects", () => {

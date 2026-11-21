@@ -300,8 +300,10 @@
           const effectiveThemeId = halfThemeId ?? themeId;
           const effectiveCustomTheme = halfThemeId !== null ? halfCustomTheme : customTheme;
           const effectiveThemeMode = halfThemeId !== null ? wantedMode : themeMode;
+          // A theme with no dark palette boots the standard splash; mirrors applyThemePalette.
+          const paintsTheme = effectiveIsThemed && effectiveThemeMode === "dark";
           const customColors =
-            effectiveIsThemed && effectiveCustomTheme
+            paintsTheme && effectiveCustomTheme
               ? effectiveThemeMode === effectiveCustomTheme.appearance
                 ? effectiveCustomTheme.colors
                 : (effectiveCustomTheme.variants?.[effectiveThemeMode] ??
@@ -314,7 +316,7 @@
           // The runtime tolerates individual malformed colors, so fall back
           // per role rather than dropping the theme.
           const builtInSplash =
-            effectiveIsThemed && !effectiveCustomTheme && effectiveThemeMode
+            paintsTheme && !effectiveCustomTheme
               ? (BUILT_IN_THEME_PALETTES[effectiveThemeId]?.[effectiveThemeMode] ?? null)
               : null;
           const fallbackSplash = isDark ? SPLASH_COLORS.dark : SPLASH_COLORS.light;
@@ -331,7 +333,7 @@
                   : (customDefaults?.accent ?? fallbackSplash.accent),
               }
             : null;
-          if (effectiveIsThemed) {
+          if (paintsTheme) {
             document.documentElement.dataset.themeId = effectiveCustomTheme
               ? effectiveCustomTheme.id
               : effectiveThemeId;
