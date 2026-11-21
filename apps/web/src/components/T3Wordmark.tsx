@@ -1,7 +1,7 @@
 import type { SVGProps } from "react";
 
 /**
- * The Attractor mark: two orbits crossing around a core. Keeps the upstream export name so every
+ * The Autoresearch mark: two orbits crossing around a core. Keeps the upstream export name so every
  * surface that drew the T3 mark picks it up.
  */
 export function T3Wordmark(props: SVGProps<SVGSVGElement>) {

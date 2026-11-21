@@ -26,8 +26,7 @@ export function StandalonePageHeader({
       <div className="flex items-baseline justify-between gap-3 text-muted-foreground">
         <span className="flex items-center gap-2" role="img" aria-label={APP_BASE_NAME}>
           <T3Wordmark className="size-4 shrink-0 text-foreground" aria-hidden />
-          {/* oxlint-disable-next-line t3code/no-untranslated-copy -- product wordmark */}
-          <span className="atr-wordmark text-foreground">Attractor</span>
+          <span className="atr-wordmark text-foreground">Autoresearch</span>
         </span>
         {context ? <span className="text-sm">{context}</span> : null}
       </div>

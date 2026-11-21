@@ -13,12 +13,12 @@ const repoRoot = NodePath.resolve(desktopDir, "..", "..");
 const devBundleIdSuffix = NodePath.basename(repoRoot)
   .toLowerCase()
   .replaceAll(/[^a-z0-9]+/g, "");
-const APP_DISPLAY_NAME = isDevelopment ? "Attractor (Dev)" : "Attractor (Beta)";
+const APP_DISPLAY_NAME = isDevelopment ? "Autoresearch (Dev)" : "Autoresearch (Beta)";
 const APP_BUNDLE_ID = isDevelopment
   ? `com.t3tools.t3code.dev.${devBundleIdSuffix || "local"}`
   : "com.t3tools.t3code";
 const APP_PROTOCOL_SCHEMES = isDevelopment ? ["t3code-dev"] : ["t3code"];
-const LAUNCHER_VERSION = 21;
+const LAUNCHER_VERSION = 22;
 const developmentMacIconPngPath = NodePath.join(
   repoRoot,
   "assets",

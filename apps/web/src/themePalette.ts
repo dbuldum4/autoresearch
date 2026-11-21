@@ -44,7 +44,7 @@ const GROVE_THEME_ID = "grove" as const;
 const OCEAN_THEME_ID = "ocean" as const;
 const EMBER_THEME_ID = "ember" as const;
 const IRIS_THEME_ID = "iris" as const;
-/** Attractor ships one appearance; the light half of every theme is ignored. */
+/** Autoresearch ships one appearance; the light half of every theme is ignored. */
 export const DARK_ONLY: boolean = true;
 export const THEME_FILE_VERSION = 1 as const;
 export const CUSTOM_THEMES_STORAGE_KEY = "t3code:themes:v1";
@@ -1778,7 +1778,7 @@ export function resolveThemeAppearance(
   appearanceMode?: ThemePreferenceMode,
   halves?: ThemeHalves | null,
 ): "light" | "dark" {
-  // Attractor is dark only.
+  // Autoresearch is dark only.
   if (DARK_ONLY) return "dark";
   const systemAppearance = systemDark ? "dark" : "light";
   const mode = appearanceMode ?? ((followSystem ?? theme === "system") ? "system" : null);

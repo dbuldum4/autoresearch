@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Attractor",
-  "short_name": "Attractor",
+  "name": "Autoresearch",
+  "short_name": "Autoresearch",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

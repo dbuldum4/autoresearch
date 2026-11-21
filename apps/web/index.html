@@ -294,7 +294,7 @@
               : themeModes.includes(appearanceMode)
                 ? appearanceMode
                 : baseAppearance;
-          // Attractor is dark only; mirrors DARK_ONLY in themePalette.ts.
+          // Autoresearch is dark only; mirrors DARK_ONLY in themePalette.ts.
           const isDark = true;
           const effectiveIsThemed = halfThemeId !== null || isThemed;
           const effectiveThemeId = halfThemeId ?? themeId;
@@ -664,13 +664,13 @@
       if (desktopDisplayName) document.title = desktopDisplayName;
     </script>
     <!-- vite.config.ts stamps the web build's channel into this title. -->
-    <title>Attractor</title>
+    <title>Autoresearch</title>
   </head>
   <body>
     <div id="root">
       <div id="boot-shell">
-        <div id="boot-shell-card" aria-label="Attractor splash screen">
-          <img id="boot-shell-logo" src="/apple-touch-icon.png" alt="Attractor" />
+        <div id="boot-shell-card" aria-label="Autoresearch splash screen">
+          <img id="boot-shell-logo" src="/apple-touch-icon.png" alt="Autoresearch" />
         </div>
       </div>
     </div>

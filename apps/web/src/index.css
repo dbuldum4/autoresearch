@@ -2654,7 +2654,7 @@ code {
 }
 
 /* ============================================================================
-   Attractor: the visual layer of this fork, kept last so it wins the cascade.
+   Autoresearch: the visual layer of this fork, kept last so it wins the cascade.
    Colour tokens apply only while no custom theme is active, so imported themes still win.
    Structure (stage, chrome, type) applies always. */
 

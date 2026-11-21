@@ -164,7 +164,7 @@ function getIconOption(
   });
 }
 
-// Attractor is dark only: the window paints Umbra before the renderer does.
+// Autoresearch is dark only: the window paints Umbra before the renderer does.
 const WINDOW_BACKGROUND_COLOR = "#050507";
 
 function getInitialWindowBackgroundColor(_shouldUseDarkColors: boolean): string {

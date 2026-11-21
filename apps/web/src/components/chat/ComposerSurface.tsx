@@ -28,7 +28,7 @@ function Shell({
       )}
       {...props}
     >
-      {/* Lights the card's edge while an agent works (see attractor.css). */}
+      {/* Lights the card's edge while an agent works (see index.css). */}
       <span aria-hidden="true" className="atr-composer-aura" />
       {children}
     </div>

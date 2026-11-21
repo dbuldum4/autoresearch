@@ -63,7 +63,7 @@ const STANDARD_THEME_PREVIEW_COLORS: Record<
 export const STANDARD_THEME_CARDS: ReadonlyArray<ThemeCardDefinition> = [
   {
     id: "default",
-    label: "Attractor",
+    label: "Autoresearch",
     previews: (DARK_ONLY ? (["dark"] as const) : (["light", "dark"] as const)).map((mode) => ({
       mode,
       colors: STANDARD_THEME_PREVIEW_COLORS[mode],

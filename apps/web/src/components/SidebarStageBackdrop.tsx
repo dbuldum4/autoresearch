@@ -17,7 +17,7 @@ export function resolveSidebarStageBackdropVariant(
 ): SidebarStageBackdropVariant | null {
   if (mode === "nightly-artwork") return "nightly";
   if (mode === "dev-artwork") return "dev";
-  // Attractor keeps its chrome quiet: channel artwork shows only when chosen explicitly.
+  // Autoresearch keeps its chrome quiet: channel artwork shows only when chosen explicitly.
   void stageLabel;
   return null;
 }
