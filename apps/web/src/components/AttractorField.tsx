@@ -6,7 +6,8 @@ import { cn } from "../lib/utils";
 /**
  * The fork's signature: a Clifford strange attractor drawn as light. Seeds are iterated in the
  * vertex shader and accumulated additively, so density becomes brightness, as in a long exposure.
- * The parameters drift slowly, and faster while an agent works.
+ * The parameters drift while an agent works. An idle field drifts briefly, then rests on its
+ * last frame, so a screen nobody is working on costs no GPU time.
  */
 
 const POINT_COUNT = 260_000;
@@ -16,6 +17,11 @@ const PERSISTENCE = 0.9;
 const WARMUP_FRAMES = 28;
 const MAX_PIXEL_RATIO = 1.5;
 const FRAME_INTERVAL_MS = 1000 / 30;
+// How long an idle field keeps moving after it appears or work ends, and how much of that it
+// spends slowing to a stop.
+const IDLE_DRIFT_MS = 9000;
+const IDLE_SETTLE_MS = 3000;
+const SOFTWARE_RENDERER = /swiftshader|llvmpipe|software/i;
 
 const POINT_VERTEX = `#version 300 es
 precision highp float;
@@ -151,6 +157,13 @@ function createRenderer(
     powerPreference: "low-power",
   });
   if (!gl) return null;
+  // A software rasterizer runs the point shader on the CPU, which it cannot afford.
+  const rendererInfo = gl.getExtension("WEBGL_debug_renderer_info");
+  if (
+    rendererInfo &&
+    SOFTWARE_RENDERER.test(String(gl.getParameter(rendererInfo.UNMASKED_RENDERER_WEBGL)))
+  )
+    return null;
   // Density needs more than 8 bits, or dim regions band and bright ones clip.
   if (!gl.getExtension("EXT_color_buffer_float") && !gl.getExtension("EXT_color_buffer_half_float"))
     return null;
@@ -318,27 +331,39 @@ export function AttractorField({
     let frame = 0;
     let last = 0;
     let visible = true;
+    let restAt = 0;
 
     const tick = (now: number) => {
+      // Read from the DOM so a change of pace does not rebuild the WebGL context.
+      const working = canvas.dataset.active === "true";
+      if (!visible || document.hidden || (!working && now >= restAt)) {
+        frame = 0;
+        return;
+      }
       frame = requestAnimationFrame(tick);
-      if (!visible || document.hidden) return;
       const elapsed = now - last;
       if (elapsed < FRAME_INTERVAL_MS) return;
       last = now;
-      // Ease toward the target speed so starting work is a swell, not a jump.
-      // Read from the DOM so a change of pace does not rebuild the WebGL context.
-      const target = canvas.dataset.active === "true" ? ACTIVE_SPEED : IDLE_SPEED;
+      // Ease toward the target speed so starting work is a swell and resting is a glide.
+      const target = working ? ACTIVE_SPEED : now < restAt - IDLE_SETTLE_MS ? IDLE_SPEED : 0;
       speed += (target - speed) * 0.04;
       position += (speed * Math.min(elapsed, 100)) / 1000;
       renderer.draw(position);
     };
 
+    const wake = () => {
+      if (reducedMotion.matches) return;
+      restAt = performance.now() + IDLE_DRIFT_MS;
+      if (frame === 0) frame = requestAnimationFrame(tick);
+    };
+
     const start = () => {
       cancelAnimationFrame(frame);
+      frame = 0;
       renderer.resize();
       renderer.develop(position);
       setReady(true);
-      if (!reducedMotion.matches) frame = requestAnimationFrame(tick);
+      wake();
     };
 
     const stopObservingSize = observeResize(canvas, () => {
@@ -346,8 +371,13 @@ export function AttractorField({
     });
     const intersectionObserver = new IntersectionObserver((entries) => {
       visible = entries.some((entry) => entry.isIntersecting);
+      if (visible) wake();
     });
     intersectionObserver.observe(canvas);
+    // Work starting or ending sets the field moving again.
+    const activityObserver = new MutationObserver(wake);
+    activityObserver.observe(canvas, { attributeFilter: ["data-active"] });
+    document.addEventListener("visibilitychange", wake);
     reducedMotion.addEventListener("change", start);
     start();
 
@@ -355,6 +385,8 @@ export function AttractorField({
       cancelAnimationFrame(frame);
       stopObservingSize();
       intersectionObserver.disconnect();
+      activityObserver.disconnect();
+      document.removeEventListener("visibilitychange", wake);
       reducedMotion.removeEventListener("change", start);
       renderer.dispose();
     };
