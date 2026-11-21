@@ -17,10 +17,8 @@ export function resolveSidebarStageBackdropVariant(
 ): SidebarStageBackdropVariant | null {
   if (mode === "nightly-artwork") return "nightly";
   if (mode === "dev-artwork") return "dev";
-  if (mode !== "artwork") return null;
-  const normalized = stageLabel.trim().toLowerCase();
-  if (normalized === "nightly") return "nightly";
-  if (normalized === "dev") return "dev";
+  // Autoresearch keeps its chrome quiet: channel artwork shows only when chosen explicitly.
+  void stageLabel;
   return null;
 }
 

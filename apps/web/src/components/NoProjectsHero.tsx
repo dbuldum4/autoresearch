@@ -6,6 +6,7 @@ import { openCommandPalette } from "../commandPaletteBus";
 import { isElectron } from "../env";
 import { useScratchProject } from "../hooks/useScratchProject";
 import { usePrimaryEnvironmentId } from "../state/environments";
+import { AttractorField } from "./AttractorField";
 import { Button } from "./ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "./ui/empty";
 import { SidebarInset } from "./ui/sidebar";
@@ -27,8 +28,9 @@ export function NoProjectsHero() {
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden bg-background">
         {/* The desktop window only moves where CSS opts in, so keep a titlebar strip. */}
         {isElectron ? <WorkspacePageHeader electron /> : null}
-        <Empty size="hero" className="flex-1">
-          <div className="w-full max-w-lg px-8 py-12">
+        <Empty size="hero" className="relative flex-1">
+          <AttractorField className="atr-field-hero" form={2} />
+          <div className="relative w-full max-w-lg px-8 py-12">
             <EmptyHeader className="max-w-none">
               <EmptyTitle>
                 <T>What should we work on?</T>

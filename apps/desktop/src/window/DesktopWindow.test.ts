@@ -1357,9 +1357,9 @@ describe("DesktopWindow", () => {
         yield* desktopWindow.syncAppearance;
       }).pipe(Effect.provide(layer));
 
-      assert.deepEqual(vi.mocked(framed.window.setBackgroundColor).mock.calls, [["#ffffff"]]);
+      assert.deepEqual(vi.mocked(framed.window.setBackgroundColor).mock.calls, [["#050507"]]);
       assert.lengthOf(vi.mocked(framed.window.setTitleBarOverlay).mock.calls, 0);
-      assert.deepEqual(vi.mocked(overlay.window.setBackgroundColor).mock.calls, [["#ffffff"]]);
+      assert.deepEqual(vi.mocked(overlay.window.setBackgroundColor).mock.calls, [["#050507"]]);
       assert.lengthOf(vi.mocked(overlay.window.setTitleBarOverlay).mock.calls, 1);
     }),
   );

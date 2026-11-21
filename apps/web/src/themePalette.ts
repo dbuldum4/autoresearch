@@ -44,6 +44,8 @@ const GROVE_THEME_ID = "grove" as const;
 const OCEAN_THEME_ID = "ocean" as const;
 const EMBER_THEME_ID = "ember" as const;
 const IRIS_THEME_ID = "iris" as const;
+/** Autoresearch ships one appearance; the light half of every theme is ignored. */
+export const DARK_ONLY: boolean = true;
 export const THEME_FILE_VERSION = 1 as const;
 export const CUSTOM_THEMES_STORAGE_KEY = "t3code:themes:v1";
 export const THEME_FOLLOW_SYSTEM_STORAGE_KEY = "t3code:theme-follow-system";
@@ -442,10 +444,16 @@ export function getStandardThemeColors(appearance: ThemeAppearance): ThemeColors
   return (standardLightThemeColors ??= decodeThemeColors(T3_CODE_LIGHT_THEME_COLORS));
 }
 
-// index.css paints the light bubble a step darker than the shared palette mobile uses.
+// index.css paints the light bubble a step darker than the shared palette mobile uses,
+// and the dark surfaces in the Autoresearch palette.
 const STANDARD_WEB_PAINTED_COLORS: Record<ThemeAppearance, Partial<ThemeColors>> = {
   light: { messageSurface: "#ebebed" },
-  dark: { canvas: "#000000", messageSurface: "#1e1e1e" },
+  dark: {
+    canvas: "#0a0a0e",
+    surface: "#121218",
+    surfaceRaised: "#121218",
+    messageSurface: "#19181c",
+  },
 };
 
 /** The standard theme as index.css paints it, for solves that measure the page. */
@@ -1729,6 +1737,11 @@ export function applyThemeColorPreview(
   if (typeof document === "undefined") return;
   const root = document.documentElement;
   if (!root?.style) return;
+  if (DARK_ONLY && appearance !== "dark") {
+    // A light draft is never painted; show the standard palette while it is edited.
+    applyThemePalette("system", "dark");
+    return;
+  }
 
   root.dataset.themeId = THEME_PREVIEW_ID;
   root.classList.toggle("dark", appearance === "dark");
@@ -1747,7 +1760,12 @@ export function applyThemePalette(theme: ThemePreference, appearance?: ThemeAppe
   if (!root?.style) return;
 
   setThemePreviewAppearance(null);
-  const palette = getThemeDefinition(theme);
+  const definition = getThemeDefinition(theme);
+  // Dark only: a theme with no dark palette shows the standard one, not its light colors.
+  const palette =
+    DARK_ONLY && definition && getThemeColorsForMode(definition, "dark") === null
+      ? null
+      : definition;
   applyThemeCss(palette?.css);
   applyThemeBackground(palette?.id);
 
@@ -1776,6 +1794,8 @@ export function resolveThemeAppearance(
   appearanceMode?: ThemePreferenceMode,
   halves?: ThemeHalves | null,
 ): "light" | "dark" {
+  // Autoresearch is dark only.
+  if (DARK_ONLY) return "dark";
   const systemAppearance = systemDark ? "dark" : "light";
   const mode = appearanceMode ?? ((followSystem ?? theme === "system") ? "system" : null);
   if (mode === "system") {
@@ -1801,6 +1821,7 @@ export function resolveDesktopTheme(
   appearanceMode?: ThemePreferenceMode,
   halves?: ThemeHalves | null,
 ): "light" | "dark" | "system" {
+  if (DARK_ONLY) return "dark";
   const mode = appearanceMode ?? ((followSystem ?? theme === "system") ? "system" : null);
   if (mode === "system") {
     const definition = getThemeDefinition(theme);

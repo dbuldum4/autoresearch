@@ -5,6 +5,7 @@ import { cn } from "~/lib/utils";
 function Shell({
   contextRow = false,
   className,
+  children,
   ...props
 }: ComponentProps<"div"> & { contextRow?: boolean }) {
   return (
@@ -26,7 +27,11 @@ function Shell({
         className,
       )}
       {...props}
-    />
+    >
+      {/* Lights the card's edge while an agent works (see index.css). */}
+      <span aria-hidden="true" className="atr-composer-aura" />
+      {children}
+    </div>
   );
 }
 

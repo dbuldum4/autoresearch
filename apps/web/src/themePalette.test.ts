@@ -11,6 +11,7 @@ import {
   contextChipVariables,
   getThemeDefinition,
   getThemeColorsForMode,
+  getThemeColorVariable,
   getThemeModes,
   getCustomThemes,
   getStandardThemeColors,
@@ -302,7 +303,7 @@ describe("theme files", () => {
     });
     expect(getThemeModes(T3_CHAT_THEME)).toEqual(["light", "dark"]);
     expect(resolveThemeAppearance(T3_CHAT_THEME.id, true, true)).toBe("dark");
-    expect(resolveDesktopTheme(T3_CHAT_THEME.id, true)).toBe("system");
+    expect(resolveDesktopTheme(T3_CHAT_THEME.id, true)).toBe("dark");
     expect(resolveThemeAppearance(T3_CHAT_THEME.id, false, false, "dark")).toBe("dark");
     expect(resolveDesktopTheme(T3_CHAT_THEME.id, false, "dark")).toBe("dark");
     expect(JSON.parse(serializeThemeFile(theme)).variants.dark).toMatchObject({
@@ -656,7 +657,7 @@ describe("context chip colors", () => {
   it("reads at 5:1 on the standard surfaces as index.css paints them", () => {
     const painted = {
       light: ["#fcfcfc", "#ffffff", "#ebebed"],
-      dark: ["#000000", "#0a0a0a", "#111111", "#141414", "#1e1e1e"],
+      dark: ["#050507", "#0a0a0e", "#121218", "#19181c"],
     } as const;
     const properties = new Map<string, string>();
     vi.stubGlobal("window", { localStorage: { getItem: () => null } });
@@ -683,6 +684,44 @@ describe("context chip colors", () => {
           }
         }
       }
+    } finally {
+      vi.unstubAllGlobals();
+      invalidateCustomThemes();
+    }
+  });
+
+  it("paints the standard palette for a theme that has no dark colors", () => {
+    const properties = new Map<string, string>();
+    const dataset: Record<string, string | undefined> = {};
+    vi.stubGlobal("window", {
+      localStorage: {
+        getItem: (key: string) =>
+          key === CUSTOM_THEMES_STORAGE_KEY
+            ? JSON.stringify([
+                {
+                  id: "daylight",
+                  label: "Daylight",
+                  appearance: "light",
+                  colors: { canvas: "#ffffff", text: "#111111" },
+                },
+              ])
+            : null,
+      },
+    });
+    vi.stubGlobal("document", {
+      documentElement: {
+        dataset,
+        style: {
+          setProperty: (name: string, value: string) => properties.set(name, value),
+          removeProperty: (name: string) => properties.delete(name),
+        },
+      },
+    });
+    invalidateCustomThemes();
+    try {
+      applyThemePalette("daylight", "dark");
+      expect(properties.has(getThemeColorVariable("text"))).toBe(false);
+      expect(dataset.themeId).toBeUndefined();
     } finally {
       vi.unstubAllGlobals();
       invalidateCustomThemes();
@@ -751,11 +790,11 @@ describe("stored theme preferences", () => {
     });
     invalidateCustomThemes();
     try {
-      expect(resolveThemeAppearance("paper", true, true)).toBe("light");
+      expect(resolveThemeAppearance("paper", true, true)).toBe("dark");
       const halves = { dark: GROVE_THEME.id };
       expect(resolveThemeAppearance("paper", true, true, undefined, halves)).toBe("dark");
       expect(resolveThemeAppearance("paper", false, false, "dark", halves)).toBe("dark");
-      expect(resolveDesktopTheme("paper", true, undefined, halves)).toBe("system");
+      expect(resolveDesktopTheme("paper", true, undefined, halves)).toBe("dark");
 
       expect(getThemeDefinition("constructor")).toEqual(publishedTheme);
       expect(canonicalThemePreference("constructor")).toBe("constructor");

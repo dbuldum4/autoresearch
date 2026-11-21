@@ -8,6 +8,7 @@ import {
 import { cn } from "../../lib/utils";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import {
+  DARK_ONLY,
   getThemeColorsForMode,
   getThemeModes,
   type ThemeAppearance,
@@ -48,19 +49,22 @@ const STANDARD_THEME_PREVIEW_COLORS: Record<
     ...SHARED_STANDARD_THEME_PREVIEW_COLORS.light,
   },
   dark: {
-    sidebar: "#0f0f10",
-    surface: "#121212",
-    accentSurface: "#27272a",
-    messageSurface: "#27272a",
     ...SHARED_STANDARD_THEME_PREVIEW_COLORS.dark,
+    sidebar: "#050507",
+    canvas: "#0a0a0e",
+    surface: "#121218",
+    accentSurface: "#181820",
+    accent: "#ffb36b",
+    messageSurface: "#1a1a20",
+    messageAction: "#ffb36b",
   },
 };
 
 export const STANDARD_THEME_CARDS: ReadonlyArray<ThemeCardDefinition> = [
   {
     id: "default",
-    label: "T3 Code",
-    previews: (["light", "dark"] as const).map((mode) => ({
+    label: "Autoresearch",
+    previews: (DARK_ONLY ? (["dark"] as const) : (["light", "dark"] as const)).map((mode) => ({
       mode,
       colors: STANDARD_THEME_PREVIEW_COLORS[mode],
     })),

@@ -1,4 +1,5 @@
 import * as Clock from "effect/Clock";
+import * as Config from "effect/Config";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
@@ -97,7 +98,7 @@ const DEVELOPMENT_RETRYABLE_LOAD_ERROR_CODES = new Set([-2, -7, -9, -102, -105, 
 
 type WindowTitleBarOptions = Pick<
   Electron.BrowserWindowConstructorOptions,
-  "titleBarOverlay" | "titleBarStyle" | "trafficLightPosition"
+  "titleBarOverlay" | "titleBarStyle" | "trafficLightPosition" | "vibrancy" | "visualEffectState"
 >;
 
 type DesktopWindowRuntimeServices =
@@ -163,8 +164,16 @@ function getIconOption(
   });
 }
 
-function getInitialWindowBackgroundColor(shouldUseDarkColors: boolean): string {
-  return shouldUseDarkColors ? "#000000" : "#ffffff";
+// Autoresearch is dark only: the window paints Umbra before the renderer does.
+const WINDOW_BACKGROUND_COLOR = "#050507";
+
+function getInitialWindowBackgroundColor(_shouldUseDarkColors: boolean): string {
+  return WINDOW_BACKGROUND_COLOR;
+}
+
+// macOS shows the desktop through the chrome, so the main window itself stays clear.
+function getMainWindowBackgroundColor(platform: NodeJS.Platform): string {
+  return platform === "darwin" ? "#00000000" : WINDOW_BACKGROUND_COLOR;
 }
 
 type DisplayBounds = Pick<Electron.Rectangle, "x" | "y" | "width" | "height">;
@@ -264,9 +273,9 @@ export function resolveInitialMainWindowBounds(
 
 function buildConnectingSplashDataUrl(shouldUseDarkColors: boolean): string {
   const background = getInitialWindowBackgroundColor(shouldUseDarkColors);
-  const label = shouldUseDarkColors ? "#9ca3af" : "#6b7280";
-  const accent = shouldUseDarkColors ? "#f8fafc" : "#1f2937";
-  const track = shouldUseDarkColors ? "rgba(248,250,252,0.18)" : "rgba(31,41,55,0.18)";
+  const label = "#8e8b93";
+  const accent = "#ffb36b";
+  const track = "rgba(236,231,223,0.14)";
   const html = `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><style>html,body{margin:0;height:100%}body{background:${background};color:${label};font-family:system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;-webkit-user-select:none;user-select:none;-webkit-app-region:drag}.spinner{width:26px;height:26px;border:3px solid ${track};border-top-color:${accent};border-radius:50%;animation:spin .8s linear infinite}.label{font-size:13px}@keyframes spin{to{transform:rotate(360deg)}}</style></head><body><div class="spinner"></div><div class="label">Connecting to WSL…</div></body></html>`;
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 }
@@ -326,6 +335,8 @@ function getWindowTitleBarOptions(
   if (platform === "darwin") {
     return {
       titleBarStyle: "hiddenInset",
+      vibrancy: "under-window",
+      visualEffectState: "followWindow",
       trafficLightPosition: {
         x: 16,
         y: MACOS_WORKSPACE_TOPBAR_HEIGHT / 2 - MACOS_WINDOW_BUTTON_RADIUS,
@@ -354,7 +365,7 @@ function syncWindowAppearance(
       return;
     }
 
-    window.setBackgroundColor(getInitialWindowBackgroundColor(shouldUseDarkColors));
+    window.setBackgroundColor(getMainWindowBackgroundColor(platform));
     const { titleBarOverlay } = getWindowTitleBarOptions(shouldUseDarkColors, platform);
     if (hasTitleBarOverlay && typeof titleBarOverlay === "object") {
       window.setTitleBarOverlay(titleBarOverlay);
@@ -482,7 +493,7 @@ export const make = Effect.gen(function* () {
       show: false,
       autoHideMenuBar: true,
       ...(environment.platform === "darwin" ? { disableAutoHideCursor: true } : {}),
-      backgroundColor: getInitialWindowBackgroundColor(shouldUseDarkColors),
+      backgroundColor: getMainWindowBackgroundColor(environment.platform),
       ...iconOption,
       title: environment.displayName,
       ...getWindowTitleBarOptions(shouldUseDarkColors, environment.platform),
@@ -1037,7 +1048,11 @@ export const make = Effect.gen(function* () {
     // Desktop IPC only answers the main window, so register it before its renderer can call in.
     yield* electronWindow.setMain(window);
     loadApplication();
-    if (environment.isDevelopment) {
+    const openDevTools = yield* Config.Boolean("T3CODE_DESKTOP_DEVTOOLS").pipe(
+      Config.withDefault(true),
+      Effect.orElseSucceed(() => true),
+    );
+    if (environment.isDevelopment && openDevTools) {
       window.webContents.openDevTools({ mode: "detach" });
     }
 
