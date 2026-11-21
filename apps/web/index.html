@@ -6,14 +6,14 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
     />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#050507" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <script>
       (() => {
         const LIGHT_BACKGROUND = "#ffffff";
-        const DARK_BACKGROUND = "#000000";
+        const DARK_BACKGROUND = "#050507";
         const CUSTOM_THEMES_STORAGE_KEY = "t3code:themes:v1";
         const ENVIRONMENT_THEMES_STORAGE_KEY = "t3code:environment-themes:v1";
         const THEME_FOLLOW_SYSTEM_STORAGE_KEY = "t3code:theme-follow-system";
@@ -26,9 +26,9 @@
             accent: "#4f46e5",
           },
           dark: {
-            background: "#000000",
-            foreground: "#f5f5f5",
-            accent: "#818cf8",
+            background: "#050507",
+            foreground: "#ece7df",
+            accent: "#ffb36b",
           },
         };
         // These are the runtime defaults used to complete a custom palette
@@ -256,15 +256,7 @@
           const storedFollowSystem = window.localStorage.getItem(THEME_FOLLOW_SYSTEM_STORAGE_KEY);
           const preferenceMode =
             theme === "light" || theme === "dark" ? theme : (legacyMode ?? baseAppearance);
-          const appearanceMode = isThemePreferenceMode(storedAppearanceMode)
-            ? storedAppearanceMode
-            : storedFollowSystem === "true"
-              ? "system"
-              : storedFollowSystem === "false"
-                ? preferenceMode
-                : theme === "system"
-                  ? "system"
-                  : preferenceMode;
+          const appearanceMode = "dark";
           // A valid mix half for the wanted appearance takes over: it decides
           // light vs dark even when the base theme cannot render that mode.
           // Mirrors the runtime's halves-aware resolveThemeAppearance.
@@ -302,14 +294,8 @@
               : themeModes.includes(appearanceMode)
                 ? appearanceMode
                 : baseAppearance;
-          const isDark =
-            halfThemeId !== null
-              ? wantedMode === "dark"
-              : isThemed
-                ? themeMode === "dark"
-                : appearanceMode === "system"
-                  ? prefersDark
-                  : appearanceMode === "dark";
+          // Attractor is dark only; mirrors DARK_ONLY in themePalette.ts.
+          const isDark = true;
           const effectiveIsThemed = halfThemeId !== null || isThemed;
           const effectiveThemeId = halfThemeId ?? themeId;
           const effectiveCustomTheme = halfThemeId !== null ? halfCustomTheme : customTheme;
@@ -379,10 +365,7 @@
           }
           setThemeColor(chromeColor);
         } catch {
-          let prefersDark = true;
-          try {
-            prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          } catch {}
+          const prefersDark = true;
           delete document.documentElement.dataset.themeId;
           delete document.documentElement.dataset.themeSelected;
           document.documentElement.classList.toggle("dark", prefersDark);
@@ -409,8 +392,8 @@
       }
 
       html.dark body {
-        background: #000000;
-        color: #f5f5f5;
+        background: #050507;
+        color: #ece7df;
       }
 
       #boot-shell {
@@ -467,8 +450,8 @@
       }
 
       html.dark #boot-error {
-        --boot-error-fg: #f5f5f5;
-        --boot-error-bg: #000000;
+        --boot-error-fg: #ece7df;
+        --boot-error-bg: #050507;
       }
 
       html[data-theme-selected="true"] #boot-error {

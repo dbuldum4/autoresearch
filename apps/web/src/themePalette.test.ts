@@ -302,7 +302,7 @@ describe("theme files", () => {
     });
     expect(getThemeModes(T3_CHAT_THEME)).toEqual(["light", "dark"]);
     expect(resolveThemeAppearance(T3_CHAT_THEME.id, true, true)).toBe("dark");
-    expect(resolveDesktopTheme(T3_CHAT_THEME.id, true)).toBe("system");
+    expect(resolveDesktopTheme(T3_CHAT_THEME.id, true)).toBe("dark");
     expect(resolveThemeAppearance(T3_CHAT_THEME.id, false, false, "dark")).toBe("dark");
     expect(resolveDesktopTheme(T3_CHAT_THEME.id, false, "dark")).toBe("dark");
     expect(JSON.parse(serializeThemeFile(theme)).variants.dark).toMatchObject({
@@ -751,11 +751,11 @@ describe("stored theme preferences", () => {
     });
     invalidateCustomThemes();
     try {
-      expect(resolveThemeAppearance("paper", true, true)).toBe("light");
+      expect(resolveThemeAppearance("paper", true, true)).toBe("dark");
       const halves = { dark: GROVE_THEME.id };
       expect(resolveThemeAppearance("paper", true, true, undefined, halves)).toBe("dark");
       expect(resolveThemeAppearance("paper", false, false, "dark", halves)).toBe("dark");
-      expect(resolveDesktopTheme("paper", true, undefined, halves)).toBe("system");
+      expect(resolveDesktopTheme("paper", true, undefined, halves)).toBe("dark");
 
       expect(getThemeDefinition("constructor")).toEqual(publishedTheme);
       expect(canonicalThemePreference("constructor")).toBe("constructor");

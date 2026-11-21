@@ -45,7 +45,7 @@ const OCEAN_THEME_ID = "ocean" as const;
 const EMBER_THEME_ID = "ember" as const;
 const IRIS_THEME_ID = "iris" as const;
 /** Attractor ships one appearance; the light half of every theme is ignored. */
-const DARK_ONLY: boolean = true;
+export const DARK_ONLY: boolean = true;
 export const THEME_FILE_VERSION = 1 as const;
 export const CUSTOM_THEMES_STORAGE_KEY = "t3code:themes:v1";
 export const THEME_FOLLOW_SYSTEM_STORAGE_KEY = "t3code:theme-follow-system";

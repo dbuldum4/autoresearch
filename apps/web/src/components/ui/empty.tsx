@@ -21,6 +21,7 @@ function Empty({
         emptySizeClassName[size],
         className,
       )}
+      data-size={size}
       data-slot="empty"
       {...props}
     />

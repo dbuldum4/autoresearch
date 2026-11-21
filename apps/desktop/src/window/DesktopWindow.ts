@@ -1,4 +1,5 @@
 import * as Clock from "effect/Clock";
+import * as Config from "effect/Config";
 import * as Context from "effect/Context";
 import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
@@ -1047,7 +1048,11 @@ export const make = Effect.gen(function* () {
     // Desktop IPC only answers the main window, so register it before its renderer can call in.
     yield* electronWindow.setMain(window);
     loadApplication();
-    if (environment.isDevelopment && process.env.T3CODE_DESKTOP_DEVTOOLS !== "0") {
+    const openDevTools = yield* Config.Boolean("T3CODE_DESKTOP_DEVTOOLS").pipe(
+      Config.withDefault(true),
+      Effect.orElseSucceed(() => true),
+    );
+    if (environment.isDevelopment && openDevTools) {
       window.webContents.openDevTools({ mode: "detach" });
     }
 

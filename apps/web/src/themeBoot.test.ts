@@ -312,18 +312,20 @@ describe("index.html boot script", () => {
   it("keeps every built-in boot splash in sync with the real palettes", () => {
     for (const theme of [T3_CHAT_THEME, GROVE_THEME, OCEAN_THEME, EMBER_THEME, IRIS_THEME]) {
       expect(theme.appearance).toBe("light");
-      for (const mode of ["light", "dark"] as const) {
+      // Dark only: a stored light mode still boots the dark palette.
+      for (const stored of ["light", "dark"] as const) {
+        const mode = "dark" as const;
         const colors = getThemeColorsForMode(theme, mode);
         expect(colors).not.toBeNull();
         const boot = runBootScript({
           storage: {
             [THEME_STORAGE_KEY]: theme.id,
-            [THEME_APPEARANCE_MODE_STORAGE_KEY]: mode,
+            [THEME_APPEARANCE_MODE_STORAGE_KEY]: stored,
           },
-          prefersDark: mode === "dark",
+          prefersDark: stored === "dark",
         });
         expect(boot.themeId).toBe(theme.id);
-        expect(boot.isDark).toBe(mode === "dark");
+        expect(boot.isDark).toBe(true);
         expect(boot.bootVariables["--boot-background"]).toBe(colors!.canvas);
         expect(boot.bootVariables["--boot-foreground"]).toBe(colors!.text);
         expect(boot.bootVariables["--boot-accent"]).toBe(colors!.accent);
@@ -347,11 +349,12 @@ describe("index.html boot script", () => {
       getThemeColorsForMode(GROVE_THEME, "dark")!.canvas,
     );
 
+    // Dark only: a light OS still boots the dark half.
     const light = runBootScript({ storage, prefersDark: false });
-    expect(light.isDark).toBe(false);
-    expect(light.themeId).toBe("t3-chat");
+    expect(light.isDark).toBe(true);
+    expect(light.themeId).toBe(GROVE_THEME.id);
     expect(light.bootVariables["--boot-background"]).toBe(
-      getThemeColorsForMode(T3_CHAT_THEME, "light")!.canvas,
+      getThemeColorsForMode(GROVE_THEME, "dark")!.canvas,
     );
   });
 
@@ -397,9 +400,9 @@ describe("index.html boot script", () => {
     expect(boot.metaContent).toBe(DEFAULT_DARK_CHROME);
   });
 
-  it("follows the OS appearance when storage is unavailable", () => {
+  it("stays dark when storage is unavailable", () => {
     const light = runBootScript({ storageThrows: true, prefersDark: false });
-    expect(light.isDark).toBe(false);
+    expect(light.isDark).toBe(true);
     expect(light.themeId).toBeUndefined();
 
     const dark = runBootScript({ storageThrows: true, prefersDark: true });

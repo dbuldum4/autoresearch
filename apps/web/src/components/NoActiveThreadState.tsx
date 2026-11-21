@@ -1,4 +1,5 @@
 import { T } from "gt-react";
+import { AttractorField } from "./AttractorField";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "./ui/empty";
 import { SidebarInset } from "./ui/sidebar";
 import { isElectron } from "../env";
@@ -22,8 +23,9 @@ export function NoActiveThreadState() {
           )}
         </WorkspacePageHeader>
 
-        <Empty className="flex-1">
-          <div className="w-full max-w-lg px-8 py-12">
+        <Empty className="relative flex-1">
+          <AttractorField className="atr-field-hero" form={3} />
+          <div className="relative w-full max-w-lg px-8 py-12">
             <EmptyHeader className="max-w-none">
               <EmptyTitle>
                 <T>Pick a thread to continue</T>
