@@ -12,8 +12,6 @@ import {
   getThemePreferenceMode,
   getThemePreviewAppearance,
   parseThemeHalves,
-  resolveDesktopTheme,
-  resolveThemeAppearance,
   resolveThemeHalf,
   subscribeToThemePreview,
   THEME_PREVIEW_ID,
@@ -319,7 +317,7 @@ function applyTheme(theme: Theme, { suppressTransitions = false, preservePreview
     lastAppliedTheme.appearanceMode === appearanceMode &&
     themeHalvesSignature(lastAppliedTheme.themeHalves) === themeHalvesSignature(themeHalves)
   ) {
-    syncDesktopTheme(theme, followSystem, appearanceMode);
+    syncDesktopTheme(theme);
     return;
   }
 
@@ -332,7 +330,7 @@ function applyTheme(theme: Theme, { suppressTransitions = false, preservePreview
   document.documentElement.classList.toggle("dark", true);
   lastAppliedTheme = { theme, systemDark, followSystem, appearanceMode, themeHalves };
   syncBrowserChromeTheme();
-  syncDesktopTheme(theme, followSystem, appearanceMode);
+  syncDesktopTheme(theme);
   if (suppressTransitions) {
     // Force a reflow so the no-transitions class takes effect before removal
     void document.documentElement.offsetHeight;
@@ -342,48 +340,35 @@ function applyTheme(theme: Theme, { suppressTransitions = false, preservePreview
   }
 }
 
-async function syncDesktopThemePreference(
-  bridge: DesktopThemeBridge,
-  theme: Theme,
-  followSystem?: boolean,
-  appearanceMode?: ThemePreferenceMode,
-  halves: ThemeHalves | null = readStoredThemeHalves(),
-): Promise<void> {
+async function syncDesktopThemePreference(bridge: DesktopThemeBridge, theme: Theme): Promise<void> {
   try {
-    await bridge.setTheme(resolveDesktopTheme(theme, followSystem, appearanceMode, halves));
+    await bridge.setTheme("dark");
   } catch (cause) {
     throw new DesktopThemeSyncError({ theme, cause });
   }
 }
 
-function syncDesktopTheme(
-  theme: Theme,
-  followSystem?: boolean,
-  appearanceMode?: ThemePreferenceMode,
-) {
+function syncDesktopTheme(theme: Theme) {
   if (typeof window === "undefined") return;
   const bridge = window.desktopBridge;
-  const halves = readStoredThemeHalves();
-  const desktopTheme = resolveDesktopTheme(theme, followSystem, appearanceMode, halves);
+  const desktopTheme = "dark" as const;
   if (!bridge || typeof bridge.setTheme !== "function" || lastDesktopTheme === desktopTheme) {
     return;
   }
 
   lastDesktopTheme = desktopTheme;
-  void syncDesktopThemePreference(bridge, theme, followSystem, appearanceMode, halves).catch(
-    (cause: unknown) => {
-      const error = isDesktopThemeSyncError(cause)
-        ? cause
-        : new DesktopThemeSyncError({ theme, cause });
-      console.error(error.message, {
-        theme: error.theme,
-        ...safeErrorLogAttributes(error),
-      });
-      if (lastDesktopTheme === desktopTheme) {
-        lastDesktopTheme = null;
-      }
-    },
-  );
+  void syncDesktopThemePreference(bridge, theme).catch((cause: unknown) => {
+    const error = isDesktopThemeSyncError(cause)
+      ? cause
+      : new DesktopThemeSyncError({ theme, cause });
+    console.error(error.message, {
+      theme: error.theme,
+      ...safeErrorLogAttributes(error),
+    });
+    if (lastDesktopTheme === desktopTheme) {
+      lastDesktopTheme = null;
+    }
+  });
 }
 
 if (typeof document !== "undefined" && typeof window !== "undefined") {
@@ -401,13 +386,8 @@ function getSnapshot(): ThemeSnapshot {
   const systemDark = followSystem ? getSystemDark() : false;
   const themeHalves = readStoredThemeHalves();
 
-  const resolvedTheme = resolveThemeAppearance(
-    theme,
-    systemDark,
-    followSystem,
-    appearanceMode,
-    themeHalves,
-  );
+  // Autoresearch is dark-only; keep snapshot resolution aligned with applyTheme().
+  const resolvedTheme: ThemeAppearance = "dark";
   if (
     lastSnapshot &&
     lastSnapshot.theme === theme &&
