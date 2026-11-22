@@ -29,6 +29,7 @@ import {
 } from "~/sidebarProjectGrouping";
 import { useProjects } from "~/state/entities";
 import { useEnvironments, usePrimaryEnvironmentId } from "~/state/environments";
+import { AutoresearchMark } from "../AutoresearchMark";
 import { ProjectEnvironmentBadge } from "../ProjectEnvironmentBadge";
 import { ProjectFavicon } from "../ProjectFavicon";
 import { isProjectPinShortcut, ProjectPinButton } from "../ProjectPinButton";
@@ -359,12 +360,17 @@ export function DraftHeroHeadline({
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col items-center">
+      <div className="eh-specular-pill mb-3.5 inline-flex items-center gap-2 rounded-full px-3 py-1 text-2xs font-medium tracking-widest text-info-foreground uppercase">
+        <AutoresearchMark className="size-3.5 text-info" />
+        {/* oxlint-disable-next-line t3code/no-untranslated-copy -- product wordmark */}
+        <span className="font-mono">{"AUTORESEARCH // 01"}</span>
+      </div>
       {hasResolvedProject && !isScratchDraft ? (
         <DraftHeroProjectHeading projectName={activeProjectTitle ?? gt("Choose a project")}>
           {projectSelector}
         </DraftHeroProjectHeading>
       ) : (
-        <h1 className="w-full text-center font-normal text-2xl text-foreground tracking-tight sm:text-3xl">
+        <h1 className="font-display w-full text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {isScratchDraft ? (
             <T>What should we work on?</T>
           ) : canChooseProject ? (
@@ -377,7 +383,7 @@ export function DraftHeroHeadline({
         </h1>
       )}
       {scratchWorkspaceRoot === null ? null : (
-        <p className="mt-2 flex h-6 w-full items-center justify-center text-sm">
+        <p className="mt-2.5 flex h-6 w-full items-center justify-center text-sm">
           {isScratchDraft ? projectSelector : orStartWithoutProject}
         </p>
       )}

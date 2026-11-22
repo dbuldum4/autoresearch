@@ -1,19 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
     />
-    <meta name="theme-color" content="#000000" />
-    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <meta name="theme-color" content="#050608" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Crect width='24' height='24' rx='6' fill='%23050608'/%3E%3Ccircle cx='12' cy='12' r='8.5' stroke='%23eef1f8' stroke-opacity='0.35' stroke-width='1.1'/%3E%3Cpath d='M5.2 15.8C7.6 10.6 13.4 7.4 19.3 8.2' stroke='%23eef1f8' stroke-opacity='0.92' stroke-width='1.35' stroke-linecap='round'/%3E%3Cpath d='M18.8 8.2C16.4 13.4 10.6 16.6 4.7 15.8' stroke='%238faeff' stroke-opacity='0.9' stroke-width='1.15' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='2.15' fill='%23eef1f8'/%3E%3C/svg%3E"
+    />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <script>
       (() => {
-        const LIGHT_BACKGROUND = "#ffffff";
-        const DARK_BACKGROUND = "#000000";
+        const LIGHT_BACKGROUND = "#050608";
+        const DARK_BACKGROUND = "#050608";
         const CUSTOM_THEMES_STORAGE_KEY = "t3code:themes:v1";
         const ENVIRONMENT_THEMES_STORAGE_KEY = "t3code:environment-themes:v1";
         const THEME_FOLLOW_SYSTEM_STORAGE_KEY = "t3code:theme-follow-system";
@@ -21,14 +31,14 @@
         const THEME_HALVES_STORAGE_KEY = "t3code:theme-halves:v1";
         const SPLASH_COLORS = {
           light: {
-            background: "#ffffff",
-            foreground: "#262626",
-            accent: "#4f46e5",
+            background: "#050608",
+            foreground: "#eef1f8",
+            accent: "#8faeff",
           },
           dark: {
-            background: "#000000",
-            foreground: "#f5f5f5",
-            accent: "#818cf8",
+            background: "#050608",
+            foreground: "#eef1f8",
+            accent: "#8faeff",
           },
         };
         // These are the runtime defaults used to complete a custom palette
@@ -302,14 +312,8 @@
               : themeModes.includes(appearanceMode)
                 ? appearanceMode
                 : baseAppearance;
-          const isDark =
-            halfThemeId !== null
-              ? wantedMode === "dark"
-              : isThemed
-                ? themeMode === "dark"
-                : appearanceMode === "system"
-                  ? prefersDark
-                  : appearanceMode === "dark";
+          // Autoresearch is dark-only.
+          const isDark = true;
           const effectiveIsThemed = halfThemeId !== null || isThemed;
           const effectiveThemeId = halfThemeId ?? themeId;
           const effectiveCustomTheme = halfThemeId !== null ? halfCustomTheme : customTheme;
@@ -409,8 +413,8 @@
       }
 
       html.dark body {
-        background: #000000;
-        color: #f5f5f5;
+        background: #050608;
+        color: #eef1f8;
       }
 
       #boot-shell {
@@ -681,13 +685,51 @@
       if (desktopDisplayName) document.title = desktopDisplayName;
     </script>
     <!-- vite.config.ts stamps the web build's channel into this title. -->
-    <title>T3 Code</title>
+    <title>Autoresearch</title>
   </head>
   <body>
     <div id="root">
       <div id="boot-shell">
-        <div id="boot-shell-card" aria-label="T3 Code splash screen">
-          <img id="boot-shell-logo" src="/apple-touch-icon.png" alt="T3 Code" />
+        <div id="boot-shell-card" aria-label="Autoresearch splash screen">
+          <svg
+            id="boot-shell-logo"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="9.5"
+              stroke="#eef1f8"
+              stroke-opacity="0.22"
+              stroke-width="1.1"
+            />
+            <path
+              d="M5.2 15.8C7.6 10.6 13.4 7.4 19.3 8.2"
+              stroke="#eef1f8"
+              stroke-opacity="0.92"
+              stroke-width="1.35"
+              stroke-linecap="round"
+            />
+            <path
+              d="M18.8 8.2C16.4 13.4 10.6 16.6 4.7 15.8"
+              stroke="#8faeff"
+              stroke-opacity="0.88"
+              stroke-width="1.15"
+              stroke-linecap="round"
+            />
+            <circle cx="12" cy="12" r="2.15" fill="#eef1f8" />
+            <circle
+              cx="12"
+              cy="12"
+              r="4.4"
+              stroke="#8faeff"
+              stroke-opacity="0.34"
+              stroke-width="0.9"
+            />
+          </svg>
         </div>
       </div>
     </div>

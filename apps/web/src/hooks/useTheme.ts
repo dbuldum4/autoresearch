@@ -41,11 +41,11 @@ type DesktopThemeBridge = Pick<DesktopBridge, "setTheme">;
 const STORAGE_KEY = "t3code:theme";
 const MEDIA_QUERY = "(prefers-color-scheme: dark)";
 const DEFAULT_THEME_SNAPSHOT: ThemeSnapshot = {
-  theme: "system",
-  resolvedTheme: "light",
-  systemDark: false,
-  followSystem: true,
-  appearanceMode: "system",
+  theme: "dark",
+  resolvedTheme: "dark",
+  systemDark: true,
+  followSystem: false,
+  appearanceMode: "dark",
   themeHalves: null,
 };
 
@@ -326,15 +326,10 @@ function applyTheme(theme: Theme, { suppressTransitions = false, preservePreview
   if (suppressTransitions) {
     document.documentElement.classList.add("no-transitions");
   }
-  const resolvedAppearance = resolveThemeAppearance(
-    theme,
-    systemDark,
-    followSystem,
-    appearanceMode,
-    themeHalves,
-  );
+  // Autoresearch is dark-only; always resolve and apply the dark appearance.
+  const resolvedAppearance: ThemeAppearance = "dark";
   applyThemePalette(resolveThemeHalf(theme, themeHalves, resolvedAppearance), resolvedAppearance);
-  document.documentElement.classList.toggle("dark", resolvedAppearance === "dark");
+  document.documentElement.classList.toggle("dark", true);
   lastAppliedTheme = { theme, systemDark, followSystem, appearanceMode, themeHalves };
   syncBrowserChromeTheme();
   syncDesktopTheme(theme, followSystem, appearanceMode);
