@@ -295,6 +295,7 @@ import {
 import { useEnvironmentShellHasSnapshot } from "../state/shell";
 import { ChatComposer, type ChatComposerHandle } from "./chat/ChatComposer";
 import { DraftHeroHeadline } from "./chat/DraftHeroHeadline";
+import { SingularityAttractor } from "./SingularityAttractor";
 import { ExpandedImageDialogHost, openExpandedImagePreview } from "./chat/ExpandedImageDialog";
 import {
   BranchRestoreConfirmHost,
@@ -3701,11 +3702,26 @@ export default function ChatView(props: ChatViewProps) {
               data-chat-composer-overlay="true"
               className={
                 isDraftHeroState
-                  ? "pointer-events-none absolute inset-0 z-20 flex items-center [@media(max-height:34rem)]:items-end"
+                  ? "eh-ambient-horizon pointer-events-none absolute inset-0 z-20 flex items-center overflow-hidden [@media(max-height:34rem)]:items-end"
                   : "pointer-events-none absolute inset-x-0 bottom-0 z-20 pt-1.5 sm:pt-2"
               }
             >
-              <div ref={draftHeroTransitionGroupRef} className="chat-composer-lane w-full">
+              {isDraftHeroState ? (
+                <>
+                  <SingularityAttractor
+                    variant="hero"
+                    className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-80"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="eh-horizon-vignette pointer-events-none absolute inset-0 z-0"
+                  />
+                </>
+              ) : null}
+              <div
+                ref={draftHeroTransitionGroupRef}
+                className="chat-composer-lane relative z-10 w-full"
+              >
                 <div
                   data-chat-composer-stack="true"
                   className="group/composer-stack pointer-events-auto relative z-10 mx-auto w-full max-w-(--chat-content-max-width)"
